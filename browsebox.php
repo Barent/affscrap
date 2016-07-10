@@ -15,13 +15,27 @@ Author URI: barent.me
 
         $affArray = create_affiliate_array();
 
-        $content .= crawl_for_price($affArray[1], $affArray[2]);
-        $content .= '</br>';
-        $content .= crawl_for_price($affArray[3], $affArray[4]);
-        $content .= '</br>';
-        $content .= crawl_for_price($affArray[5], $affArray[6]);
-        $content .= '</br>';
-        $content .= crawl_for_price($affArray[7], $affArray[8]);
+        $content .= '<table>';
+        $content .= '<tr>';
+        $content .= '<th><h3>Vendor</h3></th>';
+        $content .= '<th><h3>Price</h3></th>';
+        $content .= '</tr>';
+        $content .= '<tr>';
+        $content .= '<th><h4>Bestbuy</h4></th>';
+        $content .= '<th>' . crawl_for_price($affArray[1], $affArray[2]) . '</th>';
+        $content .= '</tr>';
+        $content .= '<tr>';
+        $content .= '<th><h4>Amazon</h4></th>';
+        $content .= '<th>' . crawl_for_price($affArray[3], $affArray[4]) . '</th>';
+        $content .= '</tr>';
+        $content .= '<tr>';
+        $content .= '<th><h4>Gamestop</h4></th>';
+        $content .= '<th>' . crawl_for_price($affArray[5], $affArray[6]) . '</th>';
+        $content .= '</tr>';
+        $content .= '<tr>';
+        $content .= '<th><h4>Ebay</h4></th>';
+        $content .= '<th>' . crawl_for_price($affArray[7], $affArray[8]) . '</th>';
+        $content .= '</table>';
 
         return $content;
     }
