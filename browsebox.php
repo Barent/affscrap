@@ -100,33 +100,34 @@ if( !function_exists("browsebox_config") )
 //add_filter('the_content', 'browsebox_config');
 
 //web scrape plug in portion
-    function initiate_the_crawl($content){
+    function initiate_the_crawl($atts){
 
         $affArray = create_affiliate_array();
 
-        $content .= '<table>';
-        $content .= '<tr>';
-        $content .= '<th><h3>Vendor</h3></th>';
-        $content .= '<th><h3>Price</h3></th>';
-        $content .= '</tr>';
-        $content .= '<tr>';
-        $content .= '<th><h4>Bestbuy</h4></th>';
-        $content .= '<th>' . crawl_for_price(get_option('browsebox_config1'), $affArray[2])  . '</th>'; //crawl_for_price($affArray[1], $affArray[2])
-        $content .= '</tr>';
-        $content .= '<tr>';
-        $content .= '<th><h4>Amazon</h4></th>';
-        $content .= '<th>' . crawl_for_price(get_option('browsebox_config2'), $affArray[4])  . '</th>'; //crawl_for_price($affArray[3], $affArray[4]) 
-        $content .= '</tr>';
-        $content .= '<tr>';
-        $content .= '<th><h4>Gamestop</h4></th>';
-        $content .= '<th>' . crawl_for_price(get_option('browsebox_config3'), $affArray[6])  . '</th>'; //crawl_for_price($affArray[5], $affArray[6])
-        $content .= '</tr>';
-        $content .= '<tr>';
-        $content .= '<th><h4>Ebay</h4></th>';
-        $content .= '<th>' . crawl_for_price(get_option('browsebox_config4'), $affArray[8]) . '</th>'; //crawl_for_price($affArray[7], $affArray[8])
-        $content .= '</table>';
 
-        return $content;
+        $browseId .= '<table>';
+        $browseId .= '<tr>';
+        $browseId .= '<th><h3>Vendor</h3></th>';
+        $browseId .= '<th><h3>Price</h3></th>';
+        $browseId .= '</tr>';
+        $browseId .= '<tr>';
+        $browseId .= '<th><h4>Bestbuy</h4></th>';
+        $browseId .= '<th>' . crawl_for_price(get_option('browsebox_config1'), $affArray[2]) .'</th>'; //crawl_for_price($affArray[1], $affArray[2])
+        $browseId .= '</tr>';
+        $browseId .= '<tr>';
+        $browseId .= '<th><h4>Amazon</h4></th>';
+        $browseId .= '<th>' . crawl_for_price(get_option('browsebox_config2'), $affArray[4])  . '</th>'; //crawl_for_price($affArray[3], $affArray[4]) 
+        $browseId .= '</tr>';
+        $browseId .= '<tr>';
+        $browseId .= '<th><h4>Gamestop</h4></th>';
+        $browseId .= '<th>' . crawl_for_price(get_option('browsebox_config3'), $affArray[6])  . '</th>'; //crawl_for_price($affArray[5], $affArray[6])
+        $browseId .= '</tr>';
+        $browseId .= '<tr>';
+        $browseId .= '<th><h4>Ebay</h4></th>';
+        $browseId .= '<th>' . crawl_for_price(get_option('browsebox_config4'), $affArray[8]) . '</th>'; //crawl_for_price($affArray[7], $affArray[8])
+        $browseId .= '</table>';
+
+        return "{$browseId}";
     }
    
           
@@ -190,10 +191,8 @@ if( !function_exists("browsebox_config") )
     }
     
 
-    add_filter('the_content', 'initiate_the_crawl' );
+    add_shortcode('browsebox_include', 'initiate_the_crawl' );
 
 
-    // Call extra_post_info_menu function to load plugin menu in dashboard
-    add_action( 'admin_menu', 'extra_post_info_menu' );
-
+   
 ?>
