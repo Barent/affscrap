@@ -11,6 +11,95 @@ Version: 0.1
 Author URI: barent.me
 */
 
+// Call extra_post_info_menu function to load plugin menu in dashboard
+add_action( 'admin_menu', 'browsebox_config_menu');
+
+// Create WordPress admin menu
+if( !function_exists("browsebox_config_menu") )
+{
+  function browsebox_config_menu(){
+
+    $page_title = 'Browsebox Configuration Info';
+    $menu_title = 'Browsebox Configuration';
+    $capability = 'manage_options';
+    $menu_slug  = 'browsebox-post-info';
+    $function   = 'browsebox_config_page';
+    $icon_url   = 'dashicons-media-code';
+    $position   = 4;
+
+    add_menu_page( $page_title,
+                   $menu_title,
+                   $capability,
+                   $menu_slug,
+                   $function,
+                   $icon_url,
+                   $position );
+
+    // Call update_extra_post_info function to update database
+    add_action( 'admin_init', 'update_browsebox_config_info' );
+
+  }
+
+}
+
+// Create function to register plugin settings in the database
+if( !function_exists("update_browsebox_config_info") )
+{
+  function update_browsebox_config_info() {
+    register_setting( 'browsebox-config-settings', 'browsebox_config1' );
+    register_setting( 'browsebox-config-settings', 'browsebox_config2' );
+    register_setting( 'browsebox-config-settings', 'browsebox_config3' );
+    register_setting( 'browsebox-config-settings', 'browsebox_config4' );
+  }
+}
+
+// Create WordPress plugin page
+if( !function_exists("browsebox_config_page") )
+{
+  function browsebox_config_page(){
+  ?>
+    <h1>Browsebox Configuration Info</h1>
+    <form method="post" action="options.php">
+      <?php settings_fields( 'browsebox-config-settings' ); ?>
+      <?php do_settings_sections( 'browsebox-config-settings' ); ?>
+      <table class="form-table">
+        <tr valign="top">
+        <th scope="row">Bestbuy:</th>
+        <td><input type="text" name="browsebox_config1" value="<?php echo get_option('browsebox_config1'); ?>"/></td>
+        </tr>
+        <tr>
+        <th scope="row">Amazon:</th>
+        <td><input type="text" name="browsebox_config2" value="<?php echo get_option('browsebox_config2'); ?>"/></td>
+        </tr>
+        <tr>
+        <th scope="row">GameStop:</th>
+        <td><input type="text" name="browsebox_config3" value="<?php echo get_option('browsebox_config3'); ?>"/></td>
+        </tr>
+        <tr>
+        <th scope="row">Ebay:</th>
+        <td><input type="text" name="browsebox_config4" value="<?php echo get_option('browsebox_config4'); ?>"/></td>
+        </tr>
+      </table>
+    <?php submit_button(); ?>
+    </form>
+  <?php
+  }
+}
+
+// Plugin logic for adding extra info to posts
+if( !function_exists("browsebox_config") )
+{
+  function browsebox_config($content)
+  {
+    //$extra_info = get_option('browsebox_config');
+    //return $content . $extra_info;
+  }
+}
+
+// Apply the extra_post_info function on our content  
+//add_filter('the_content', 'browsebox_config');
+
+//web scrape plug in portion
     function initiate_the_crawl($content){
 
         $affArray = create_affiliate_array();
@@ -22,19 +111,19 @@ Author URI: barent.me
         $content .= '</tr>';
         $content .= '<tr>';
         $content .= '<th><h4>Bestbuy</h4></th>';
-        $content .= '<th>' . crawl_for_price($affArray[1], $affArray[2]) . '</th>';
+        $content .= '<th>' . crawl_for_price(get_option('browsebox_config1'), $affArray[2])  . '</th>'; //crawl_for_price($affArray[1], $affArray[2])
         $content .= '</tr>';
         $content .= '<tr>';
         $content .= '<th><h4>Amazon</h4></th>';
-        $content .= '<th>' . crawl_for_price($affArray[3], $affArray[4]) . '</th>';
+        $content .= '<th>' . crawl_for_price(get_option('browsebox_config2'), $affArray[4])  . '</th>'; //crawl_for_price($affArray[3], $affArray[4]) 
         $content .= '</tr>';
         $content .= '<tr>';
         $content .= '<th><h4>Gamestop</h4></th>';
-        $content .= '<th>' . crawl_for_price($affArray[5], $affArray[6]) . '</th>';
+        $content .= '<th>' . crawl_for_price(get_option('browsebox_config3'), $affArray[6])  . '</th>'; //crawl_for_price($affArray[5], $affArray[6])
         $content .= '</tr>';
         $content .= '<tr>';
         $content .= '<th><h4>Ebay</h4></th>';
-        $content .= '<th>' . crawl_for_price($affArray[7], $affArray[8]) . '</th>';
+        $content .= '<th>' . crawl_for_price(get_option('browsebox_config4'), $affArray[8]) . '</th>'; //crawl_for_price($affArray[7], $affArray[8])
         $content .= '</table>';
 
         return $content;
@@ -44,6 +133,7 @@ Author URI: barent.me
 
     function crawl_for_price($url, $regex){
         include_once('simple_html_dom.php');
+
         
         // create curl resource
         $ch = curl_init();
@@ -101,5 +191,9 @@ Author URI: barent.me
     
 
     add_filter('the_content', 'initiate_the_crawl' );
+
+
+    // Call extra_post_info_menu function to load plugin menu in dashboard
+    add_action( 'admin_menu', 'extra_post_info_menu' );
 
 ?>
