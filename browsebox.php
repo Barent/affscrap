@@ -14,6 +14,8 @@ Author URI: barent.me
 // Call extra_post_info_menu function to load plugin menu in dashboard
 add_action( 'admin_menu', 'browsebox_config_menu');
 
+
+
 // Create WordPress admin menu
 if( !function_exists("browsebox_config_menu") )
 {
@@ -104,7 +106,6 @@ if( !function_exists("browsebox_config") )
 
         $affArray = create_affiliate_array();
 
-
         $browseId .= '<table>';
         $browseId .= '<tr>';
         $browseId .= '<th><h3>Vendor</h3></th>';
@@ -193,6 +194,74 @@ if( !function_exists("browsebox_config") )
 
     add_shortcode('browsebox_include', 'initiate_the_crawl' );
 
+    function my_custom_post_product() {
+      $labels = array(
+        'name'               => _x( 'Products', 'post type general name' ),
+        'singular_name'      => _x( 'Product', 'post type singular name' ),
+        'add_new'            => _x( 'Add New', 'book' ),
+        'add_new_item'       => __( 'Add New Product' ),
+        'edit_item'          => __( 'Edit Product' ),
+        'new_item'           => __( 'New Product' ),
+        'all_items'          => __( 'All Products' ),
+        'view_item'          => __( 'View Product' ),
+        'search_items'       => __( 'Search Products' ),
+        'not_found'          => __( 'No products found' ),
+        'not_found_in_trash' => __( 'No products found in the Trash' ), 
+        'parent_item_colon'  => '',
+        'menu_name'          => 'Products'
+      );
+      $args = array(
+        'labels'        => $labels,
+        'description'   => 'Holds our products and product specific data',
+        'public'        => true,
+        'menu_position' => 5,
+        'supports'      => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
+        'has_archive'   => true,
+      );
+      register_post_type( 'product', $args ); 
+    }
+    add_action( 'init', 'my_custom_post_product' );
 
+    function my_taxonomies_product() {
+      $labels = array(
+        'name'              => _x( 'Product Categories', 'taxonomy general name' ),
+        'singular_name'     => _x( 'Product Category', 'taxonomy singular name' ),
+        'search_items'      => __( 'Search Product Categories' ),
+        'all_items'         => __( 'All Product Categories' ),
+        'parent_item'       => __( 'Parent Product Category' ),
+        'parent_item_colon' => __( 'Parent Product Category:' ),
+        'edit_item'         => __( 'Edit Product Category' ), 
+        'update_item'       => __( 'Update Product Category' ),
+        'add_new_item'      => __( 'Add New Product Category' ),
+        'new_item_name'     => __( 'New Product Category' ),
+        'menu_name'         => __( 'Product Categories' ),
+      );
+      $args = array(
+        'labels' => $labels,
+        'hierarchical' => true,
+      );
+      register_taxonomy( 'product_category', 'product', $args );
+    }
+    add_action( 'init', 'my_taxonomies_product', 0 );
    
+    if(!function_exists('my_custom_post_product')){
+        $args = array( 'post_type' => 'product');
+        $loop = new WP_Query( $args );
+        while ( $loop->have_posts() ) : $loop->the_post();
+            the_title();
+            echo '<div class="entry-content">';
+            the_content();
+            echo '</div>';
+        endwhile;
+    }
+
+    // Show posts of 'post', 'page' and 'movie' post types on home page
+    add_action( 'pre_get_posts', 'add_my_post_types_to_query' );
+     
+    function add_my_post_types_to_query( $query ) {
+        if ( is_home() && $query->is_main_query() )
+            $query->set( 'post_type', array( 'post', 'product' ) );
+        return $query;
+    }
+
 ?>
